@@ -2,17 +2,21 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-public class Faculty
+public class Student
 {
     [Key]
-    public int FacultyId { get; set; }
+    public int StudentId { get; set; }
 
+    public string? EnrollmentNumber { get; set; }
+
+    // Foreign Key to Batch
     [Required]
-    public string Department { get; set; }
+    public int BatchId { get; set; }
 
-    public string? Designation { get; set; }
+    [ForeignKey("BatchId")]
+    public Batch Batch { get; set; }
 
-    // Foreign Key
+    // Foreign Key to EprojectUser
     [Required]
     public string UserId { get; set; }
 

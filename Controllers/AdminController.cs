@@ -17,9 +17,21 @@ namespace Eproject.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+            if (user != null) {
+                if (user.Role == "0")
+                {
+                    return RedirectToAction("Index", "User");
+                }
+                else if (user.Role == "1") { 
+                return View();  
+                }
+            }
+            return RedirectToAction("login", "Account");
         }
     }
+
+
 }

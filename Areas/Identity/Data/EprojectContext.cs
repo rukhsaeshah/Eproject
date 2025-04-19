@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using System.Reflection.Emit;
 
 namespace Eproject.Data;
 
@@ -14,11 +15,33 @@ public class EprojectContext : IdentityDbContext<EprojectUser>
     {
     }
 
-    public DbSet<Faculty> faculty { get; set; }
+    public DbSet<Faculty> Faculties { get; set; }
+    public DbSet<Batch> Batches { get; set; }
+    public DbSet<Student> Students { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+        // One-to-One: Faculty ↔ EprojectUser
+        builder.Entity<Faculty>()
+            .HasOne(f => f.User)
+            .WithMany()
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // One-to-One: Student ↔ EprojectUser
+        builder.Entity<Student>()
+            .HasOne(s => s.User)
+            .WithMany()
+            .HasForeignKey(s => s.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // One-to-Many: Batch → Students
+        builder.Entity<Student>()
+            .HasOne(s => s.Batch)
+            .WithMany(b => b.Students)
+            .HasForeignKey(s => s.BatchId)
+            .OnDelete(DeleteBehavior.Cascade);
         builder.ApplyConfiguration(new EprojectUserEntityConfiguration()); 
 
     }
